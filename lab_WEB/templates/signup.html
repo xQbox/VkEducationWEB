@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Signup</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link href="../static/css/main.css" rel="stylesheet">
+  <link href="../static/png/blue_icon.png" rel="icon">
+</head>
+
+<body>
+  <header class="header separate-header fixed-top">
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+
+      <a href="/" class="logo d-flex align-items-center">
+        <span style="margin-top: 32%;">AskMe</span>
+      </a>
+
+    </div>
+  </header>
+
+  <main>
+    <div class="container mt-6" style="margin-top: 120px;">
+      <div class="row d-flex justify-content-center">
+        <div class="signup-window col-md-6">
+          <div class="card px-5 py-5" style="max-width: 500px;">
+            <div class="form-data">
+
+              <div class="warning-block">
+                <p class="warning">Необходима регистрация</p>
+              </div>
+  
+              <div class="title mb-4">
+                  <p>Registration</p>
+              </div>
+              
+              <form action="{% url 'signup-page' %}" method="POST">{% csrf_token %}
+
+                {% for field in signup_form %}
+                  <div class="forms-inputs mb-4">
+                    <span>{{ field.label }}</span>
+                    {{ field }}
+                    {% for error in field.errors %}
+                      <p class="input-error">&nbsp;&nbsp;&nbsp;{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endfor %}
+    
+                <!-- <div class="forms-inputs mb-4">
+                    <span>Email</span>
+                    <input type="email" name="email" id="email" required>
+                </div>
+    
+                <div class="forms-inputs mb-4">
+                    <span>Username</span>
+                    <input type="text" name="nickname" id="nickname" maxlength="25" required>
+                </div>
+    
+                <div class="forms-inputs mb-4">
+                    <span>Password</span>
+                    <input type="password" name="password" id="password" minlength="8" required>
+                </div>
+    
+                <div class="forms-inputs mb-4">
+                    <span>Repeat password</span>
+                    <input autocomplete="off" type="password" name="repeat-password" id="repeat-password" minlength="8" required>
+                </div>
+    
+                <div class="forms-inputs mb-4">
+                  <span>Upload avatar</span>
+                  <input class="form-control" type="file" id="formFile" enctype="multipart/form-data">
+                </div> -->
+    
+                <div class="ask-for-login" style="display: flex;">
+                  <p>Already have an account?</p>
+                  <a class="login-link" href="/login" style="margin-left: 8px; color: #234E70;">Log in</a>
+                </div>
+    
+                <div class="mb-3"> <input type="submit" value="Register" class="btn btn-dark w-100"></input> </div>
+              </form>
+  
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+</body>
+</html>

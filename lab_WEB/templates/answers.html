@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block answers %}
+
+<div class="container" style="height: 100%;">
+  
+  {% include 'components/question_item.html' %}
+
+  <form action="{% url 'question-info' question.id %}" method="POST"> {% csrf_token %}
+
+    {% for field in answer_form %}
+      <div class="text-input forms-inputs mb-4">
+        <!-- <span>{{ field.label }}</span> -->
+        {{ field }}
+        {% for error in field.errors %}
+          <p class="input-error">&nbsp;&nbsp;&nbsp;{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <div class="mb-3" style="width: 200px;"><input value="Answer!" type="submit" class="btn btn-dark w-100"></input></div>
+  
+  </form>
+
+  <p style="font-size: 24px; font-weight: 800;">Answers: {{ amount }}</p>
+
+  {% for answer in answers %}
+    {% include 'components/answer_item.html' %}
+  {% endfor %}
+
+  <div class="pagination">
+    {% if answers.has_previous %}
+      <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+      <a class="btn btn-outline-info mb-4" href="?page={{ answers.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    {% for num in answers.paginator.page_range %}
+      {% if answers.number == num %}
+        <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+      {% elif num > answers.number|add:'-3' and num < answers.number|add:'3' %}
+        <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if answers.has_next %}
+      <a class="btn btn-outline-info mb-4" href="?page={{ answers.next_page_number }}">Next</a>
+      <a class="btn btn-outline-info mb-4" href="?page={{ answers.paginator.num_pages }}">Last</a>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}

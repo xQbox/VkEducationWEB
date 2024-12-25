@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block ask %}
+<div class="container mt-6">
+
+  <div class="ask-title">
+    <p style="font-size: 30px; font-weight: 800;">{{ title }}</p>
+  </div>
+
+  <div class="row d-flex justify-content-left">
+    <div class="login-window col-md-6" style="width: 700px;">
+      <div class="card px-3 py-3">
+        <div class="form-data" style="width: 100%;">
+
+          <form method="POST" action="{% url 'ask-question' %}"> {% csrf_token %}
+
+            {% for field in ask_form %}
+              <div class="forms-inputs mb-4">
+                <span>{{ field.label }}</span>
+                {{ field }}
+                {% for error in field.errors %}
+                  <p class="input-error">&nbsp;&nbsp;&nbsp;{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endfor %}
+
+            <div class="mb-3"><input value="Ask!" type="submit" class="btn btn-dark w-100"></input></div>
+          </form>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

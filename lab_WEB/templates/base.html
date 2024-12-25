@@ -1,0 +1,156 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>AskMe</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link href="../static/css/main.css" rel="stylesheet">
+  <link href="../static/png/blue_icon.png" rel="icon">
+</head>
+
+<body>
+  {% csrf_token %}
+  <header id="header" class="header fixed-top">
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+
+      <a href="{% url 'main-view' %}" class="logo d-flex align-items-center">
+        <span>AskMe</span>
+      </a>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li>
+            <form class="sidebar-item search-form" action="/" method="GET">
+              <input type="text" placeholder="Search">
+              <button type="submit"><i class="bi bi-search"></i>
+                <img src="../static/png/loop.png">
+              </button>
+            </form>
+          </li>
+
+        {% if user.is_authenticated %}
+          <li><a class="getstarted scrollto" href="{% url 'ask-question' %}">ASK!</a></li>
+        {% endif %}
+
+        </ul>
+        <div class="user-block">
+            {% if user.is_authenticated %}
+              {% if request.user.profile.avatar %}
+                <img src="{{ request.user.profile.avatar.url }}" class="avatar" alt="Avatar">
+              {% else %}
+                <img src="../static/png/anon.jpg" class="avatar" alt="Avatar">
+              {% endif %}
+              <div class="side-block">
+                <div class="name-block">
+                  <p class="name">{{ user.get_username }}</p>
+                </div>
+                <div class="actions-block">
+                  <a class="nav-link" href="{% url 'user-settings' %}">Settings</a>
+                  <a class="nav-link" href="/logout">Log out</a>
+                </div>
+              </div>
+            {% else %}
+              <a class="nav-link" href="{% url 'signup-page' %}">Register</a>
+              <a class="nav-link" href="{% url 'login-page' %}">Log in</a>
+            {% endif %}
+
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="blog" class="blog">
+      <div class="container" data-aos="fade-up">
+        <div class="row">
+          <div class="col-lg-8 entries">
+            <article class="entry entry-single">
+              <div class="en">
+                {% block questions-list %}{% endblock %}
+                {% block ask %}{% endblock %}
+                {% block settings %}{% endblock %}
+                {% block answers %}{% endblock %}
+              </div>
+
+            </article>
+          </div>
+          <div class="col-lg-4">
+            <div class="sidebar">
+              <h3 class="sidebar-title">Popular Tags</h3>
+              <div class="sidebar-item tags">
+                <ul>
+                  {% for tag in tags %}
+                    <li><a href="{% url 'tag-search' tag %}">{{ tag }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+              <h3 class="sidebar-title">Best Members</h3>
+              <div class="sidebar-item categories">
+                <ul>
+                  {% for member in members %}
+                    <li><a href="#">{{ member }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer id="footer" class="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="row gy-4">
+          <div class="col-lg-5 col-md-12 footer-info">
+            <a href="{% url 'main-view' %}" class="logo d-flex align-items-center">
+              <span>AskMe</span>
+            </a>
+            <p><br>The best service for curious people!</p>
+          </div>
+
+          <div class="col-lg-2 col-6 footer-links">
+            <h4>Useful Links</h4>
+            <ul>
+              <li><i class="bi bi-chevron-right"></i> <a href="{% url 'main-view' %}">Home</a></li>
+            </ul>
+          </div>
+
+
+          <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
+            <h4>Contact Info</h4>
+            <p>
+              Moscow, Russia<br>
+              <strong>Telegram:</strong>&ensp;@b0pof<br>
+              <strong>Email:</strong>  ilya.kovalev002@gmail.com<br>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="copyright">
+        &copy; Copyright <strong><span>AskMe</span></strong>. All Rights Reserved
+      </div>
+      <div class="credits">
+        Designed by <a href="https://github.com/b0pof">me</a>
+      </div>
+    </div>
+  </footer>
+  <script src="{% static '/js/main.js' %}"></script>
+</body>
+</html>

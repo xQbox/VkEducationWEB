@@ -1,0 +1,54 @@
+{% load static %}
+{% block question_item %}
+
+<div class="question-container" style="height: 100%;">
+    <div class="meta-info-row">
+      <p class="question-date">{{ question.creation_date }}</p>
+      <p class="question-author" style="font-weight: 700;">{{ question.author }}</p>
+    </div>
+
+    <div class="question-content-container" style="height: 100%;">
+      <div class="avatar-block">
+        <img src="../static/png/question_avatar.png" class="question-avatar" alt="Avatar">
+      </div>
+
+      <div class="content-column" style="height: 100%;">
+
+        <div class="question-title-container">
+          <p class="question-title">
+            <a href="{{ question.get_url }}" style="color: black;">{{ question.title|truncatechars:40 }}</a>
+          </p>
+        </div>
+
+        <div class="description-block" style="height: 100%;">
+          <p class="question-description">{{ question.description|truncatechars:350 }}</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="bottom-row question-like-section">
+      <button class="rate-button" data-id="like" data-id="{{ question.id }}">
+        <img src="../static/png/up.png" height="100%"; width="100%">
+      </button>
+        {% if question.rating < 0 %}
+          <p class="rating-value" data-id="{{ question.id }}" style="color: red;" id="rating">{{ question.rating }}</p>
+        {% elif question.rating == 0 %}
+          <p class="rating-value" data-id="{{ question.id }}" style="color: grey;" id="rating">{{ question.rating }}</p>
+        {% elif question.rating > 0 %}
+          <p class="rating-value" data-id="{{ question.id }}" style="color: green;" id="rating">{{ question.rating }}</p>
+        {% endif %}
+      <button class="rate-button" data-id="dislike">
+        <img src="../static/png/down.png" height="100%"; width="100%">
+      </button>
+
+      <div class="tags-container">
+        <p>Tags:<span></span></p>
+        {% for tag in question.tags.all %}
+          <p class="tag"><a href="{% url 'tag-search' tag %}" style="color: #444444;"><b>{{ tag }}</b></a></p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

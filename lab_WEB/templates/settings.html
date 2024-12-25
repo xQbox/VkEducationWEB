@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block settings %}
+<div class="container mt-6" style="height: 600px;">
+  <div class="row d-flex justify-content-left" style="height: 100%;">
+    <div class="settings-window col-md-6" style="width: 700px;">
+      <div class="card px-3 py-3" style="padding-top: 0px; width: 100%; height: 100%;" id="form1">
+        <div class="form-data" style="width: 100%;">
+
+          <form method="POST" action="{% url 'user-settings' %}" enctype="multipart/form-data">{% csrf_token %}
+            <div style="margin-bottom: 30px;">
+                <p class="settings-title" style="font-size: 25px;"><a style="font-size: 30px; font-weight: 800;">Settings:&ensp;</a>@{{ user.get_username }}</p>
+            </div>
+
+            {% for field in settings_form %}
+              <div class="forms-inputs mb-4">
+                <span>{{ field.label }}</span>
+                {{ field }}
+                {% for error in field.errors %}
+                  <p class="input-error">&nbsp;&nbsp;&nbsp;{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            
+            {% if request.user.profile.avatar %}
+              <div style="width: 200px; margin-bottom: 20px;">
+                <img src="{{ request.user.profile.avatar.url }}" alt="Avatar" style="width: 100%;">
+              </div>
+            {% endif %}
+
+            <div class="mb-3"> <input type="submit" value="Save" class="btn btn-dark w-100"></input> </div>
+          </post>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
