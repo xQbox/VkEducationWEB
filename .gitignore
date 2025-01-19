@@ -1,0 +1,14 @@
+# Исключаем файлы журналов
+*.log
+
+# Исключаем временные файлы редакторов
+*.swp
+*.swo
+*.bak
+*.tmp
+
+
+Labs/lab_02/venv/
+Labs/lab_02/*.pyc
+Labs/lab_02/__pycache__/
+Labs/.idea/
