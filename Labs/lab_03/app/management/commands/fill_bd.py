@@ -1,7 +1,7 @@
 from django.core.management import BaseCommand
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from app import Question, Answer, Profile, Tag, QuestionReaction, AnswerReaction
+from app.models import Question, Answer, Profile, Tag, QuestionReaction, AnswerReaction
 from faker import Faker
 from random import randint, choice
 from django.utils import timezone
