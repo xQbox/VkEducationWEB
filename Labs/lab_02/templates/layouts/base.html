@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>mainPage</title>
+    <link rel="stylesheet" href="./../static/css/bootstrap.min.css">
+
+    <style>
+        h1 {
+            font-size: 72px;
+        }
+
+        .btn-outline-success {
+            background: black;
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <div class="d-flex w-100 justify-content-between align-items-center">
+            <a class="navbar-brand" href="#">Navbar</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Ask</button>
+            </form>
+
+            <!-- <div class="d-flex gap-1">
+                <img src="asda.jpg" alt="Avatar" class="img-thumbnail">
+                <div>
+                    <div>
+                        dr pepper
+                    </div>
+                    <a href="#">settings</a>
+                    <a href="#">logout</a>
+                </div>
+            </div> -->
+            <div class="d-flex gap-1 align-items-center profile-section">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="container mt-3">
+
+    <div class="row">
+        {% block content %}
+        {% endblock %}
+        <div class="col">
+            <section class="mb-3">
+                <h2>Popular Tags</h2>
+                <div>
+                    <span class="badge text-bg-primary"><a href="#">Primary</a></span>
+                    <span class="badge text-bg-secondary"><a href="#">Secondary</a></span>
+                    <span class="badge text-bg-success"><a href="#">Success</a></span>
+                    <span class="badge text-bg-danger"><a href="#">Danger</a></span>
+                    <span class="badge text-bg-warning"><a href="#">Warning</a></span>
+                    <span class="badge text-bg-info"><a href="#">Info</a></span>
+                    <span class="badge text-bg-light"><a href="#">Light</a></span>
+                    <span class="badge text-bg-dark"><a href="#">Dark</a></span>
+                </div>
+            </section>
+            <section>
+                <h2>Best members</h2>
+                <div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                    </ul>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+
+</main>
+<script>
+    const isAuthenticated = false; // Set to false if the user is not logged in
+    const userData = {
+        name: "Dr. Pepper",
+        avatar: "user-avatar.jpg" // Replace with the URL of the user's photo
+    };
+
+    // Select the container for the profile section
+    const profileSection = document.querySelector('.profile-section');
+
+    // Conditional rendering
+    if (isAuthenticated) {
+        profileSection.innerHTML = `
+            <img src="${userData.avatar}" alt="Avatar" class="img-thumbnail">
+            <div>
+                <div>${userData.name}</div>
+                <a href="./settings.html">Settings</a>
+                <a href="./logout.html">Logout</a>
+            </div>
+        `;
+    } else {
+        profileSection.innerHTML = `
+            <img src="1.png" alt="Avatar" class="img-thumbnail">
+            <div>
+                <div>Guest</div>
+                <a href="./register.html" class="btn btn-primary">Register</a>
+            </div>
+        `;
+    }
+</script>
+<script src="./../static/js/bootstrap.min.js"></script>
+</body>
+
+</html>
