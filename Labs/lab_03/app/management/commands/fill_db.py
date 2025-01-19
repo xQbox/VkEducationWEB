@@ -116,7 +116,10 @@ class Command(BaseCommand):
             print('\rCompleted: {}%'.format(round(i * 100 / questions_amount, 1)), end='')
 
             for _ in range(randint(1, 4)):
-                questions[i].tags.add(tags[randint(1, tags_amount - 1)])
+                if tags_amount > 1:
+                    questions[i].tags.add(tags[randint(1, tags_amount - 1)])
+                else:
+                    print("Недостаточно тегов для присвоения.")
 
         print("\rTags linked to questions!")
 
