@@ -1,0 +1,46 @@
+{% load static %}
+
+<div class="card w-100" style="width: 18rem;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-3">
+                <div class="border mb-4" style="height: 100px">
+                    <img src="./../static/img/1.png" alt="Avatar" class="img-fluid">
+                </div>
+                <input class="form-control" type="number" value="5" placeholder="Default input"
+                       aria-label="default input example">
+
+            </div>
+            <div class="col-9">
+                <style>
+                    .card-title a {
+        text-decoration: none; /* Убираем подчеркивание */
+        color: inherit; /* Сохраняем цвет родительского текста */
+        cursor: default; /* Обычный курсор по умолчанию */
+    }
+                    .card-title a:hover {
+                    cursor: pointer; /* Меняем курсор на "руку" при наведении */
+                    }
+                </style>
+                <h5 class="card-title">
+                    <a href="{% url 'question' question.id %}">{{ question.title }}</a>
+                </h5>
+
+                <p class="card-text">{{ question.text }}</p>
+
+                <div class="d-flex gap-5">
+                    <a href="{% url 'question' question.id %}" class="card-link">Answer ({{ question.id }})</a>
+                    <div>
+
+                        Tags:
+
+                        <a href="#" class="card-link">Another link</a>
+                        <a href="#" class="card-link">Another link</a>
+                        <a href="#" class="card-link">Another link</a>
+                        <a href="#" class="card-link">Another link</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

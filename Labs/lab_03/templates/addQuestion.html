@@ -1,0 +1,48 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block content %}
+<div class="d-flex gap-3 align-items-center">
+    <h1>New Question</h1>
+    <a href="{% url 'hot_questions' %}">Hot Questions</a>
+</div>
+
+<div class="col-9">
+    <div class="d-flex flex-column gap-3">
+        <form action="/register" method="POST" enctype="multipart/form-data"
+              class="p-4 border rounded shadow-sm">
+            <div class="row mb-3 align-items-center">
+                <div class="col-2">
+                    <label for="title" class="form-label">Title</label>
+                </div>
+                <div class="col-10">
+                    <input type="text" class="form-control" id="title" placeholder="How to build a moon park?">
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <div class="col-2">
+                    <label for="text" class="form-label">Text</label>
+                </div>
+                <div class="col-10">
+                            <textarea class="form-control" id="text" rows="4"
+                                      placeholder="Really, how?&#10;Have no idea about it"></textarea>
+                </div>
+            </div>
+            <div class="row mb-3 align-items-center">
+                <div class="col-2">
+                    <label for="tags" class="form-label">Tags</label>
+                </div>
+                <div class="col-10">
+                    <input type="text" class="form-control" id="tags" placeholder="moon, park, puzzle">
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-2"></div>
+                <div class="col-10">
+                    <button type="submit" class="btn btn-primary">ASK!</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

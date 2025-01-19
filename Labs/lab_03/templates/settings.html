@@ -1,0 +1,66 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block content %}
+<div class="d-flex gap-3 align-items-center">
+    <h1>Settings:</h1>
+    <h1>Bender</h1>
+</div>
+
+<div class="col-9">
+
+    <form action="/register" method="POST" enctype="multipart/form-data"
+          class="p-4 border rounded shadow-sm">
+        <div class="row mb-3 align-items-center">
+            <div class="col-2">
+                <label for="title" class="form-label">Login</label>
+            </div>
+            <div class="col-10">
+                <input type="text" class="form-control" id="title" placeholder="How to build a moon park?">
+            </div>
+        </div>
+        <div class="row mb-3 align-items-center">
+            <div class="col-2">
+                <label for="title" class="form-label">Email</label>
+            </div>
+            <div class="col-10">
+                <input type="text" class="form-control" id="Email" placeholder="How to build a moon park?">
+            </div>
+        </div>
+        <div class="row mb-3 align-items-center">
+            <div class="col-2">
+                <label for="title" class="form-label">NickName</label>
+            </div>
+            <div class="col-10">
+                <input type="text" class="form-control" id="NickName"
+                       placeholder="How to build a moon park?">
+            </div>
+        </div>
+        <div class="row mb-3 align-items-bottom">
+            <div class="col-2">
+                <label for="title" class="form-label">Avatar</label>
+            </div>
+            <div class="col-2">
+                <div class="border mb-2" style="height: 100px">
+                    <img src="jpg.jpg" alt="Avatar" class="img-fluid">
+                </div>
+            </div>
+            <div class="col-8"></div>
+
+            <div class="row mb-2">
+                <div class="col-2"></div>
+                <div class="col-4">
+                    <input class="form-control" type="file" id="formFile" name="file" required>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-2"></div>
+                <div class="col-10">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+{% endblock %}
