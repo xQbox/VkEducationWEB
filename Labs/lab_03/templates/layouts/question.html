@@ -14,12 +14,12 @@
             <div class="col-9">
                 <style>
                     .card-title a {
-        text-decoration: none; /* Убираем подчеркивание */
-        color: inherit; /* Сохраняем цвет родительского текста */
-        cursor: default; /* Обычный курсор по умолчанию */
-    }
+                        text-decoration: none;
+                        color: inherit;
+                        cursor: default;
+                    }
                     .card-title a:hover {
-                    cursor: pointer; /* Меняем курсор на "руку" при наведении */
+                    cursor: pointer;
                     }
                 </style>
                 <h5 class="card-title">
@@ -32,7 +32,7 @@
                     <a href="{% url 'question' question.id %}" class="card-link">Answer ({{ question.id }})</a>
                     <div>
                         Tags:
-<!--                        TODO -->
+                        <!--                        TODO -->
                         <a href="#" class="card-link">{{ question.tags.word }}</a>
                     </div>
                 </div>

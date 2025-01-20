@@ -113,3 +113,5 @@ def settings(request):
 
 def log_in(request):
     return render(request, 'login.html')
+
+
