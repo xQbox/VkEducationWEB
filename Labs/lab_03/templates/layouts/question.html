@@ -26,18 +26,14 @@
                     <a href="{% url 'question' question.id %}">{{ question.title }}</a>
                 </h5>
 
-                <p class="card-text">{{ question.text }}</p>
+                <p class="card-text">{{ question.description }}</p>
 
                 <div class="d-flex gap-5">
                     <a href="{% url 'question' question.id %}" class="card-link">Answer ({{ question.id }})</a>
                     <div>
-
                         Tags:
-
-                        <a href="#" class="card-link">Another link</a>
-                        <a href="#" class="card-link">Another link</a>
-                        <a href="#" class="card-link">Another link</a>
-                        <a href="#" class="card-link">Another link</a>
+<!--                        TODO -->
+                        <a href="#" class="card-link">{{ question.tags.word }}</a>
                     </div>
                 </div>
             </div>

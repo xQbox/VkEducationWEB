@@ -3,6 +3,7 @@ import copy
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse
 from django.shortcuts import render
+from app.models import Question, Answer, Profile, Tag
 
 # Список вопросов
 QUESTIONS = [
@@ -11,6 +12,17 @@ QUESTIONS = [
         'id': i,
         'text': f'This is text for QUESTIONS{i}',
     } for i in range(1, 30)
+]
+
+COLORS = [
+    "text-bg-primary",
+    "text-bg-secondary",
+    "text-bg-success",
+    "text-bg-danger",
+    "text-bg-warning",
+    "text-bg-info",
+    "text-bg-light",
+    "text-bg-dark",
 ]
 
 
@@ -38,7 +50,8 @@ def paginate(objects_list, request, per_page=5):
 
 
 def index(request):
-    page = paginate(QUESTIONS, request, per_page=5)
+    newQuestions = Question.objects.get_new()
+    page = paginate(newQuestions, request, per_page=5)
     if page is None:
         return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
 
@@ -53,8 +66,7 @@ def index(request):
 
 
 def hot_questions(request):
-    hotQuestions = copy.deepcopy(QUESTIONS)
-    hotQuestions.reverse()
+    hotQuestions = Question.objects.get_hot()
     page = paginate(hotQuestions, request, per_page=5)
     if page is None:
         return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
@@ -65,10 +77,26 @@ def hot_questions(request):
 
 
 def question(request, question_id):
-    oneQuestion = QUESTIONS[question_id - 1]
+    try:
+        oneQuestion = Question.objects.get(pk=question_id)
+    except Question.DoesNotExist:
+        return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
+
     return render(request, 'pageQuestion.html',
-                  context={'question': oneQuestion},
+                  context={'question': oneQuestion}
                   )
+
+
+def tag(request):
+    questionByTag = Question.objects.get_by_tag(tag)
+    page = paginate(questionByTag, request, per_page=5)
+    if page is None:
+        return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
+    return render(
+        request,
+        'listing.html',
+        context={'questions': page.object_list, 'page_obj': page}
+    )
 
 
 def add_question(request):

@@ -22,6 +22,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('hot-questions/', views.hot_questions, name='hot_questions'),
     path('question/<int:question_id>', views.question, name='question'),
+    path('tag/', views.tag, name='tag'),
     path('add-question/', views.add_question, name='add_question'),
     path('register/', views.register, name='register'),
     path('settings/', views.settings, name='settings'),
