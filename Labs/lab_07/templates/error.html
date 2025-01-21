@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <link rel="stylesheet" href="./../static/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        .error-container {
+            text-align: center;
+        }
+
+        .error-container img {
+            max-width: 50%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .error-container h1 {
+            font-size: 2.5rem;
+            color: #343a40;
+        }
+
+        .error-container p {
+            font-size: 1.2rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <img src="./../static/img/error.png" alt="Error">
+        <h1>Oops! Something went wrong.</h1>
+<!--        <p>{{ error }}</p> -->
+        <a href="/" class="btn btn-primary">Go Back to Home</a>
+    </div>
+</body>
+</html>

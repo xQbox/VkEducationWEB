@@ -1,0 +1,44 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load bootstrap5 %}
+{% block content %}
+<div class="d-flex gap-3 align-items-center">
+    <h1>Log In</h1>
+    <p class="text-muted">Log into the best webpage in RU segment.</p>
+</div>
+
+<div class="col-9">
+    <div class="d-flex flex-column gap-3">
+        <form action="{% url 'log_in' %}" method="POST" enctype="multipart/form-data"
+            class="p-4 border rounded shadow-sm">{% csrf_token %}
+            {% bootstrap_form loginForm %}
+            
+            <input type="hidden" name="next" value="{{ next }}">
+            {% buttons %}
+            <button type="submit" class="btn btn-primary">Login</button>
+            {% endbuttons %}
+        </form>
+        <p class="text-center mt-3">
+            Haven't got an account? <a href="{% url 'register' %}">Register</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+
+
+<!-- 
+<div class="mb-3">
+    <p class="text-danger">Sorry, wrong password!</p>
+    <label for="username" class="form-label">Login</label>
+    <input type="text" class="form-control" id="username" name="username"
+           placeholder="Enter your username" required>
+</div>
+
+<div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input type="password" class="form-control" id="password" name="password"
+           placeholder="Enter a password" required>
+</div>
+
+<button type="submit" class="btn btn-primary w-100">Log In</button> -->
