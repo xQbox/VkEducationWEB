@@ -1,0 +1,227 @@
+{% load static %}
+{% load bootstrap5 %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Question</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    <style>
+        h1 {
+            font-size: 72px;
+        }
+
+        .btn-outline-success {
+            background: black;
+        }
+
+        .profile-section img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        .question-container {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-title a {
+            text-decoration: none;
+        }
+
+        .question-title a:hover {
+            text-decoration: underline;
+        }
+
+        .tags-container {
+            margin-top: 10px;
+        }
+
+        .tags-container p {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .tags-container p a {
+            color: #444;
+            text-decoration: none;
+        }
+
+        .tags-container p a:hover {
+            text-decoration: underline;
+        }
+
+        .col-3 {
+            padding-left: 20px;
+        }
+
+        .popular-tags .badge {
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .best-members ul {
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .best-members li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+                <a class="navbar-brand" href="#">Navbar</a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <form class="d-flex" role="search" action="{% url 'add_question' %}" method="get">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Ask</button>
+                </form>
+
+                <div class="d-flex gap-1 align-items-center profile-section">
+                    {% if request.user.is_authenticated %}
+                    <img src="{{ request.user.profile.avatar.url }}" alt="Avatar" class="img-thumbnail">
+                    <div>{{ user.username }}</div>
+                    <div>
+                        <a class="nav-link" href="{% url 'settings' %}">Settings</a>
+                        <a class="nav-link" href="{% url 'log_out' %}">Logout</a>
+                    </div>
+                    {% else %}
+                    <img src="{% static 'img/error1.jpg' %}" alt="Avatar" class="img-thumbnail">
+                    <div>Guest</div>
+                    <div>
+                        <a class="nav-link btn btn-primary" href="{% url 'register' %}">Register</a>
+                        <a class="nav-link btn btn-primary" href="{% url 'log_in' %}">Login</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mt-3">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-9">
+                <div class="question-container">
+                    <div class="meta-info-row">
+                        <p class="question-date">{{ question.creation_date }}</p>
+                        <p class="question-author" style="font-weight: 700;">{{ question.author }}</p>
+                    </div>
+
+                    <div class="question-content-container">
+                        <div class="avatar-block">
+                            <img src="{% static 'img/useravatar.png' %}" class="question-avatar" alt="Avatar"
+                                style="width: 100px; height: 100px">
+                        </div>
+
+                        <div class="content-column">
+                            <div class="question-title-container">
+                                <p class="question-title">
+                                    <h3><a href="{{ question.get_url }}" style="color: black;">{{ question.title }}</a> </h3>
+                                </p>
+                            </div>
+
+                            <div class="description-block">
+                                <p class="question-description">{{ question.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bottom-row question-like-section">
+                        <button class="rate-button" data-id="like" data-id="{{ question.id }}">
+                            <img src="{% static 'img/up.png' %}" height="20px" width="20px">
+                        </button>
+
+                        {% if question.rating < 0 %}
+                        <p class="rating-value" data-id="{{ question.id }}" style="color: red;" id="rating">{{ question.rating }}</p>
+                        {% elif question.rating == 0 %}
+                        <p class="rating-value" data-id="{{ question.id }}" style="color: grey;" id="rating">{{ question.rating }}</p>
+                        {% elif question.rating > 0 %}
+                        <p class="rating-value" data-id="{{ question.id }}" style="color: green;" id="rating">{{ question.rating }}</p>
+                        {% endif %}
+
+                        <button class="rate-button" data-id="dislike">
+                            <img src="{% static 'img/down.png' %}" height="20px" width="20px">
+                        </button>
+
+                        <div class="tags-container">
+                            <p>Tags:<span></span></p>
+                            {% for tag in question.tags.all %}
+                            <p class="tag"><a href="{% url 'tag' tag %}"><b>{{ tag }}</b></a></p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                {% for answer in answers %}
+                <div id="{{ answer.id }}"></div>
+                {% include 'layouts/answer.html' %}
+                {% endfor %}
+
+                {% include 'layouts/pagination.html' %}
+
+                <hr>
+
+                <form action="{% url 'question' question.id %}" method="POST" enctype="multipart/form-data"
+                    class="p-4 border rounded shadow-sm">
+                    {% csrf_token %}
+                    {% bootstrap_form answerForm %}
+                    {% buttons %}
+                    <button type="submit" class="btn btn-primary">Ask!</button>
+                    {% endbuttons %}
+                </form>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-3">
+                <section class="popular-tags mb-3">
+                    <h2>Popular Tags</h2>
+                    <div>
+                        {% for item in color_tags %}
+                        <span class="badge {{ item.color }}">
+                            <a href="{% url 'tag' item.tag %}" class="text-white text-decoration-none">
+                                {{ item.tag }}
+                            </a>
+                        </span>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <section class="best-members">
+                    <h2>Best Members</h2>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>
