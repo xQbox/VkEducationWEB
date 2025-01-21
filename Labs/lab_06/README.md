@@ -1,6 +1,6 @@
 # Лабораторная работа N4
 ## подключение встроенной системы авторизации Django и разработка основных форм добавления данных.
-### Зависимости : django, ipython, django-bootstrap-v5, Faker """ pip install Faker """, Pillow """ pip install Pillow """
+### Зависимости : django, ipython, django-bootstrap-v5, gunicorn, Faker """ pip install Faker """, Pillow """ pip install Pillow """
 #### Скрипты запуска  - сервер python manage.py runserver - генерация данных python manage.py fill_db [ratio]
 #### ИСПРАВЛЕНО : перешёл на ask, кинуло на логин, после логина кинуло на главную, а не на ask
 #### На странице логина и регистрации специально оставлены popular tags и best members пустыми!
