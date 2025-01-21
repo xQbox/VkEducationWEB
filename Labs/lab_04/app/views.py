@@ -80,7 +80,6 @@ def hot_questions(request):
                   context={'questions': page.object_list, 'page_obj': page}
                   )
 
-
 def question(request, question_id):
     try:
         oneQuestion = Question.objects.get(pk=question_id)
@@ -104,8 +103,8 @@ def question(request, question_id):
                 print(f"Answer creation error: {e}")
     
     page = paginate(answers, request, per_page=2)
-    if not page:
-        return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
+    # if not page:
+    #     return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
     
     return render(request, 'pageQuestion.html', {
         'question': oneQuestion,
@@ -137,8 +136,9 @@ def add_question(request):
             if askForm.is_valid():
                 try:
                     questionId = askForm.save(request.user)
+                    print(questionId)
                     return redirect(f"/question/{questionId}")
-                    # return redirect(reverse('question', questionId))
+                    # return redirect(reverse('question', args=[questionId]))
                 except Exception as e:
                     print(f"Question creation error: {e}")
                     
