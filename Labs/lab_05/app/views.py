@@ -164,7 +164,7 @@ def tag(request, nameTag):
     )
 
 
-
+@login_required
 def add_question(request):
     askForm = AskForm()
     tags = Tag.objects.get_popular()
