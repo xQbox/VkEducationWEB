@@ -1,0 +1,48 @@
+{% load static %}
+{% block anwer_item %}
+
+<div class="answer-container">
+    <div class="meta-info-row">
+      <p class="answer-date">{{ answer.creation_date }}</p>
+      <p class="answer-author" style="font-weight: 700;">{{ answer.author }}</p>
+    </div>
+
+    <div class="answer-content-container">
+      <div class="avatar-block">
+        <img src="../static/img/defAvatar.png" class="answer-avatar" alt="Avatar">
+      </div>
+
+      <div class="content-column answer-description-block">
+          <p class="answer-description">{{ answer.description }}</p>
+      </div>
+
+    </div>
+
+    <div class="bottom-row answer-bottom-row answer-like-section">
+      <button class="rate-button" data-id="{{ answer.id }}">
+        <img src="../static/img/up.png" height="100%"; width="100%">
+      </button>
+      {% if answer.rating < 0 %}
+        <p class="rating-value" style="color: red;" data-id="{{ answer.id }}" data-questionid="{{ question.id }}" id="rating">{{ answer.rating }}</p>
+      {% elif answer.rating == 0 %}
+        <p class="rating-value" style="color: grey;" data-id="{{ answer.id }}" data-questionid="{{ question.id }}" id="rating">{{ answer.rating }}</p>
+      {% elif answer.rating > 0 %}
+        <p class="rating-value" style="color: green;" data-id="{{ answer.id }}" data-questionid="{{ question.id }}" id="rating">{{ answer.rating }}</p>
+      {% endif %}
+      <button class="rate-button" data-id="{{ answer.id }}">
+        <img src="../static/img/down.png" height="100%"; width="100%">
+      </button>
+
+      <div class="correct-flag">
+        {% if answer.is_correct %}
+          <input class="styled-checkbox" id="correct-checkbox" type="checkbox" value="correct" checked>
+        {% else %}
+          <input class="styled-checkbox" id="correct-checkbox" type="checkbox" value="correct">
+        {% endif %}
+        <label style="font-size: 16px;">Correct !</label>
+      </div>
+    </div>
+
+  </div>
+
+{% endblock %}

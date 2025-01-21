@@ -1,0 +1,226 @@
+{% load static %}
+{% load bootstrap5 %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>newQuestion</title>
+    <link rel="stylesheet" href="./../static/css/bootstrap.min.css">
+
+    <style>
+        h1 {
+            font-size: 72px;
+        }
+
+        .btn-outline-success {
+            background: black;
+        }
+    </style>
+</head>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <div class="d-flex w-100 justify-content-between align-items-center">
+            <a class="navbar-brand" href="#">Navbar</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <form class="d-flex" role="search" action="{% url 'add_question' %}" method="get">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Ask</button>
+            </form>
+            <div class="d-flex gap-1 align-items-center profile-section">
+                {% if request.user.is_authenticated %}
+                <img src="1.png" alt="Avatar" class="img-thumbnail">
+                <div>{{ user.username }}</div>
+                <div>
+                    <a class="nav-link" href="{% url 'settings' %}">Settings</a>
+                    <a class="nav-link" href="{% url 'log_out' %}">Logout</a>
+                </div>
+                {% else %}
+                <img src="1.png" alt="Avatar" class="img-thumbnail">
+                <div>Guest</div>
+                <div>
+                    <a class="nav-link btn btn-primary" href="{% url 'register' %}">Register</a>
+                    <a class="nav-link btn btn-primary" href="{% url 'log_in' %}">Login</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="container mt-3">
+    <div class="row">
+        <div class="col-9">
+            <div class="d-flex flex-column gap-3 ">
+                <div class="card w-100 mb-4" style="width: 18rem; border: none">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="border mb-2 avatar-container" style="height: 100px">
+                                <img src="jpg.jpg" alt="Avatar" class="img-fluid">
+                            </div>
+                            <input class="form-control mb-2 avatar-input" type="number" value="5"
+                                placeholder="Default input" aria-label="default input example">
+                        </div>
+
+                        <div class="col-9">
+                            <h2 class="card-title">{{ question.title }}</h2>
+                            <p class="card-text">{{ question.description }}</p>
+                            <p>Tags: <a href="#">black-jack</a> <a href="#">bender</a></p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <hr style="border: none; border-top: 2px solid black; width: 100%;">
+            {% for answer in answers %}
+            {% include 'layouts/answer.html' %}
+            {% endfor %}
+
+            {% include 'layouts/pagination.html'%}
+            <hr style="border: none; border-top: 2px solid black; width: 100%;">
+
+            <form action="{% url 'question' question.id %}" method="POST" enctype="multipart/form-data"
+                class="p-4 border rounded shadow-sm">
+                {% csrf_token %}
+                {% bootstrap_form answerForm %}
+                {% buttons %}
+                <button type="submit" class="btn btn-primary">Ask!</button>
+                {% endbuttons %}
+            </form>
+        </div>
+
+
+        <!-- Popular Tags Block -->
+
+        <div class="col">
+            <section class="mb-3">
+                <h2>Popular Tags</h2>
+                <div>
+                    <style>
+                        .badge a {
+                            color: inherit;
+                        }
+
+                        .badge a:hover {
+                            color: inherit;
+                            text-decoration: none;
+                            cursor: pointer;
+                        }
+                    </style>
+
+                    <div>
+                        <span class="badge text-bg-primary"><a href="{% url 'tag' %}">Primary</a></span>
+                        <span class="badge text-bg-secondary"><a href="#">Secondary</a></span>
+                        <span class="badge text-bg-success"><a href="#">Success</a></span>
+                        <span class="badge text-bg-danger"><a href="#">Danger</a></span>
+                        <span class="badge text-bg-warning"><a href="#">Warning</a></span>
+                        <span class="badge text-bg-info"><a href="#">Info</a></span>
+                        <span class="badge text-bg-light"><a href="#">Light</a></span>
+                        <span class="badge text-bg-dark"><a href="#">Dark</a></span>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2>Best members</h2>
+                <div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                        <li class="list-group-item"><a href="#">Member</a></li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+
+</main>
+<script src="./../static/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+
+
+<!-- 
+<div class="card w-100 mb-2" style="width: 18rem;">
+    <div class="row">
+        <div class="col-2">
+            <div class="border m-3 avatar-container" style="height: 100px;">
+                <img src="jpg.jpg" alt="Avatar" class="img-fluid">
+            </div>
+            <input class="form-control mb-3 ms-1 avatar-input" type="number" value="5"
+                placeholder="Default input" aria-label="default input example">
+        </div>
+        <div class="col-1"></div>
+        <div class="col-9 d-flex flex-column justify-content-between">
+            <div>
+                <p class="card-text mt-3">
+                    Some quick example text to build on the card title and make up the bulk
+                    of the card's content.
+                </p>
+            </div>
+            <div class="mb-3">
+                <input type="checkbox" id="correct1">
+                <label for="correct1">Correct!</label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card w-100 mb-2" style="width: 18rem;">
+    <div class="row">
+        <div class="col-2">
+            <div class="border m-3 avatar-container" style="height: 100px;">
+                <img src="jpg.jpg" alt="Avatar" class="img-fluid">
+            </div>
+            <input class="form-control mb-3 ms-1 avatar-input" type="number" value="5"
+                placeholder="Default input" aria-label="default input example">
+        </div>
+        <div class="col-1"></div>
+        <div class="col-9 d-flex flex-column justify-content-between">
+            <div>
+                <p class="card-text mt-3">
+                    Some quick example text to build on the card title and make up the bulk
+                    of the card's content.
+                </p>
+            </div>
+            <div class="mb-3">
+                <input type="checkbox" id="correct2">
+                <label for="correct2">Correct!</label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card w-100 mb-2" style="width: 18rem;">
+    <div class="row">
+        <div class="col-2">
+            <div class="border m-3 avatar-container" style="height: 100px;">
+                <img src="jpg.jpg" alt="Avatar" class="img-fluid">
+            </div>
+            <input class="form-control mb-3 ms-1 avatar-input" type="number" value="5"
+                placeholder="Default input" aria-label="default input example">
+        </div>
+        <div class="col-1"></div>
+        <div class="col-9 d-flex flex-column justify-content-between">
+            <div>
+                <p class="card-text mt-3">
+                    Some quick example text to build on the card title and make up the bulk
+                    of the card's content.
+                </p>
+            </div>
+            <div class="mb-3">
+                <input type="checkbox" id="correct3">
+                <label for="correct3">Correct!</label>
+            </div>
+        </div>
+    </div>
+</div> -->

@@ -1,0 +1,22 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load bootstrap5 %}
+{% block content %}
+<div class="d-flex gap-3 align-items-center">
+    <h1>New Question</h1>
+    <a href="{% url 'hot_questions' %}">Hot Questions</a>
+</div>
+
+<div class="col-9">
+    <div class="d-flex flex-column gap-3">
+        <form action="{% url 'add_question'  %}" method="POST" enctype="multipart/form-data"
+              class="p-4 border rounded shadow-sm">
+            {% csrf_token %}
+            {% bootstrap_form askForm %}
+            {% buttons %}
+            <button type="submit" class="btn btn-primary">Ask!</button>
+            {% endbuttons %}
+        </form>
+    </div>
+</div>
+{% endblock %}
