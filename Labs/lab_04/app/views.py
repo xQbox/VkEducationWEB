@@ -87,7 +87,6 @@ def question(request, question_id):
         return render(request, 'error.html', context={'error': 'Вопрос не найден.'})
     
     answers = Answer.objects.get_answers_by_question_id(question_id)
-    print(answers)
     answerForm = AnswerForm()
 
     if request.method == "POST":
@@ -98,7 +97,13 @@ def question(request, question_id):
                     description=answerForm.cleaned_data['answer']
                 ).first()
                 if not existing_answer:
-                    answerForm.save(request.user, oneQuestion)
+                    new_answer = answerForm.save(request.user, oneQuestion)
+                    print(new_answer)
+        
+                    paginator = Paginator(answers, 2)  # Количество ответов на странице
+                    for page_number in range(1, paginator.num_pages + 1):
+                        if new_answer in paginator.page(page_number).object_list:
+                            return redirect(f"/question/{question_id}?page={page_number}#{new_answer.id}")
             except Exception as e:
                 print(f"Answer creation error: {e}")
     

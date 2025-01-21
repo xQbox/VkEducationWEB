@@ -81,6 +81,7 @@
             </div>
             <hr style="border: none; border-top: 2px solid black; width: 100%;">
             {% for answer in answers %}
+                <div id="{{ answer.id }}"></div>
             {% include 'layouts/answer.html' %}
             {% endfor %}
 
