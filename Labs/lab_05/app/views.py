@@ -30,6 +30,11 @@ COLORS = [
 
 TAGS = ['python', 'django', 'cpp', 'ml', 'probabylity', 'harrypotter', 'gym', 'elbobre', 'muertaporlalibertat']
 
+def generate_colored_tags(tags, colors):
+    return [{'tag': tag, 'color': colors[i % len(colors)]} for i, tag in enumerate(tags)]
+
+
+
 
 def paginate(objects_list, request, per_page=5):
     try:
@@ -55,15 +60,13 @@ def paginate(objects_list, request, per_page=5):
 
 def index(request):
     newQuestions = Question.objects.get_new()
-    print(newQuestions)
     tags = Tag.objects.get_popular()
     page = paginate(newQuestions, request, per_page=3)
     if page is None:
         return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
-    color_tags = [
-        {'tag': tag, 'color': COLORS[i % len(COLORS)]}
-        for i, tag in enumerate(tags)
-    ]
+    
+    color_tags = generate_colored_tags(tags, COLORS)
+
     return render(
         request,
         'index.html',
@@ -80,10 +83,8 @@ def index(request):
 def hot_questions(request):
     hotQuestions = Question.objects.get_hot()
     tags = Tag.objects.get_popular()
-    color_tags = [
-        {'tag': tag, 'color': COLORS[i % len(COLORS)]}
-        for i, tag in enumerate(tags)
-    ]
+    color_tags = generate_colored_tags(tags, COLORS)
+
     page = paginate(hotQuestions, request, per_page=5)
     if page is None:
         return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
@@ -98,6 +99,7 @@ def hot_questions(request):
                     }
                 )
 
+
 def question(request, question_id):
     try:
         oneQuestion = Question.objects.get(pk=question_id)
@@ -107,10 +109,8 @@ def question(request, question_id):
     answers = Answer.objects.get_answers_by_question_id(question_id)
     answerForm = AnswerForm()
     tags = Tag.objects.get_popular()
-    color_tags = [
-        {'tag': tag, 'color': COLORS[i % len(COLORS)]}
-        for i, tag in enumerate(tags)
-    ]
+    color_tags = generate_colored_tags(tags, COLORS)
+
     if request.method == "POST":
         answerForm = AnswerForm(request.POST)
         if answerForm.is_valid():
@@ -119,13 +119,13 @@ def question(request, question_id):
                     description=answerForm.cleaned_data['answer']
                 ).first()
                 if not existing_answer:
+                    new_answer = answerForm.save(request.user, oneQuestion)
+                    
                     # TODO переделать логику -> Идея :
                     # Сохранить ответ -> найти по id вопроса все ответы к нему
                     # пройтись по всем ответам (по страницам).Найти сохраненный ответ с 
                     # записанным в указанной странице. Переключить пользователя на страницу с ответом
-                    new_answer = answerForm.save(request.user, oneQuestion)
-                    print(new_answer)
-                    paginator = Paginator(answers, 2)  # Количество ответов на странице
+                    paginator = Paginator(answers, 2) 
                     for page_number in range(1, paginator.num_pages + 1):
                         if new_answer in paginator.page(page_number).object_list:
                             return redirect(f"/question/{question_id}?page={page_number}#{new_answer.id}")
@@ -133,9 +133,6 @@ def question(request, question_id):
                 print(f"Answer creation error: {e}")
     
     page = paginate(answers, request, per_page=2)
-    # if not page:
-    #     return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
-    
     return render(request, 'pageQuestion.html', {
         'question': oneQuestion,
         'answers': page.object_list,
@@ -145,37 +142,34 @@ def question(request, question_id):
         'color_tags': color_tags,
     })
 
-
 def tag(request, nameTag):
-    
     questionByTag = Question.objects.get_by_tag(nameTag)
-    print(questionByTag)
     tags = Tag.objects.get_popular()
-    color_tags = [
-        {'tag': tag, 'color': COLORS[i % len(COLORS)]}
-        for i, tag in enumerate(tags)
-    ]
+    color_tags = generate_colored_tags(tags, COLORS)
+    
     page = paginate(questionByTag, request, per_page=3)
     if page is None:
         return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
+    
     return render(
         request,
         'listing.html',
-        context={'questions': page.object_list, 'page_obj': page, "nameTag": nameTag, 
-                        'tags': tags,
-                        'color_tags': color_tags,}
+        context={
+            'questions': page.object_list, 
+            'page_obj': page, 
+            "nameTag": nameTag, 
+            'tags': tags,
+            'color_tags': color_tags,
+        }
     )
 
 
 
-@login_required
 def add_question(request):
     askForm = AskForm()
     tags = Tag.objects.get_popular()
-    color_tags = [
-        {'tag': tag, 'color': COLORS[i % len(COLORS)]}
-        for i, tag in enumerate(tags)
-    ]
+    color_tags = generate_colored_tags(tags, COLORS)
+
     if request.method == "POST":
         askForm = AskForm(request.POST)
         if askForm.is_valid():
@@ -190,7 +184,6 @@ def add_question(request):
         'tags': tags,
         'color_tags': color_tags,
     })
-
 
 def register(request):
     if request.user.is_authenticated:
@@ -306,31 +299,5 @@ def dislike(request):
             return JsonResponse({"amount": 0})
         
     return JsonResponse({"amount": 0})
-
-
-
-# @login_required(login_url="/login", redirect_field_name="continue")
-# def like(request) -> HttpResponse:
-#     # return JsonResponse({"hello": "world"})
-
-#     if request.method == "POST":
-#         content_type = request.POST.get("content")
-#         content_id = request.POST.get("id")
-
-#         if content_id != None:
-#             if content_type == "q":
-#                 amount = Question.objects.add_like(request.user.profile.id, content_id)
-#                 return JsonResponse({"amount": amount})
-
-#             elif content_type == "a":
-#                 amount = Answer.objects.add_like(request.user.profile.id, content_id)
-#                 return JsonResponse({"amount": amount})
-#             else:
-#                 return JsonResponse({"amount": 0})
-#         else:
-#             return JsonResponse({"amount": 0})
-        
-#     return JsonResponse({"amount": 0})
-
 
 
