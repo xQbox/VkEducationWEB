@@ -99,7 +99,6 @@ def hot_questions(request):
                     }
                 )
 
-
 def question(request, question_id):
     try:
         oneQuestion = Question.objects.get(pk=question_id)
@@ -165,6 +164,7 @@ def tag(request, nameTag):
 
 
 
+@login_required
 def add_question(request):
     askForm = AskForm()
     tags = Tag.objects.get_popular()
