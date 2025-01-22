@@ -185,10 +185,14 @@
                 <form action="{% url 'question' question.id %}" method="POST" enctype="multipart/form-data"
                     class="p-4 border rounded shadow-sm">
                     {% csrf_token %}
+                    {% if user.is_authenticated %}
                     {% bootstrap_form answerForm %}
                     {% buttons %}
                     <button type="submit" class="btn btn-primary">Ask!</button>
                     {% endbuttons %}
+                    {% else %}
+                    <p>Вы должны <a href="{% url 'log_in' %}">войти</a>, чтобы оставить комментарий.</p>
+                    {% endif %}
                 </form>
             </div>
 
@@ -208,20 +212,53 @@
                 </section>
 
                 <section class="best-members">
-                    <h2>Best Members</h2>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><a href="#">Member</a></li>
-                        <li class="list-group-item"><a href="#">Member</a></li>
-                        <li class="list-group-item"><a href="#">Member</a></li>
-                        <li class="list-group-item"><a href="#">Member</a></li>
-                        <li class="list-group-item"><a href="#">Member</a></li>
-                    </ul>
+                    <h2>Best members</h2>
+                    <div>
+                        <ul class="list-group list-group-flush">
+                            {% for member in members %}
+                            <li class="list-group-item"><a href="#">{{ member }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </section>
             </div>
         </div>
     </main>
 
+    
     <script src="{% static 'js/main.js' %}"></script>
 </body>
+
+<div>
+    <div id="counter">-</div>
+    <script src="https://unpkg.com/centrifuge@5.2.2/dist/centrifuge.js"></script>
+    <script type="text/javascript">
+      const container = document.getElementById('counter');
+  
+      const centrifuge = new Centrifuge("{{ ws_url }}", {
+        token: "{{ token }}"
+      });
+  
+      centrifuge.on('connecting', function (ctx) {
+        console.log(`connecting: ${ctx.code}, ${ctx.reason}`);
+      }).on('connected', function (ctx) {
+        console.log(`connected over ${ctx.transport}`);
+      }).on('disconnected', function (ctx) {
+        console.log(`disconnected: ${ctx.code}, ${ctx.reason}`);
+      }).connect();
+  
+      const sub = centrifuge.newSubscription("{{ question.id }}");
+  
+      sub.on('publication', function (ctx) {
+        
+      }).on('subscribing', function (ctx) {
+        console.log(`subscribing: ${ctx.code}, ${ctx.reason}`);
+      }).on('subscribed', function (ctx) {
+        console.log('subscribed', ctx);
+      }).on('unsubscribed', function (ctx) {
+        console.log(`unsubscribed: ${ctx.code}, ${ctx.reason}`);
+      }).subscribe();
+    </script>
+</div>
 
 </html>

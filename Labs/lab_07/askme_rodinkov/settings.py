@@ -66,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "app.context_processors.get_centrifugo_info",
             ],
         },
     },
@@ -134,3 +135,7 @@ LOGIN_URL = '/log-in/'
 
 MEDIA_ROOT = BASE_DIR / 'uploads'
 MEDIA_URL = '/uploads/'
+
+
+CENTRIFUGO_SECRET_KEY = "my_secret"
+CENTRIFUGO_WS_URL = "ws://localhost:8080/connection/websocket"

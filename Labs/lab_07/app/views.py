@@ -117,6 +117,7 @@ def question(request, question_id):
                     for page_number in range(1, paginator.num_pages + 1):
                         if new_answer in paginator.page(page_number).object_list:
                             return redirect(f"/question/{question_id}?page={page_number}#{new_answer.id}")
+            
             except Exception as e:
                 print(f"Answer creation error: {e}")
 
