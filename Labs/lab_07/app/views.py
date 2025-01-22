@@ -95,6 +95,8 @@ def hot_questions(request):
 
 
 def question(request, question_id):
+    if request.user.is_authenticated:
+        return redirect(request.GET.get("next", reverse("continue")))
     try:
         oneQuestion = Question.objects.get(pk=question_id)
     except Question.DoesNotExist:
@@ -128,6 +130,7 @@ def question(request, question_id):
         'page_obj': page,
         'answerForm': answerForm,
         'color_tags': generate_colored_tags(Tag.objects.get_popular(), COLORS),
+        "next": request.GET.get("next", "/"),
     }
     add_context(context)
 

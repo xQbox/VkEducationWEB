@@ -250,7 +250,8 @@
       const sub = centrifuge.newSubscription("{{ question.id }}");
   
       sub.on('publication', function (ctx) {
-        
+        container.innerHTML = ctx.data.value;
+        document.title = ctx.data.value;
       }).on('subscribing', function (ctx) {
         console.log(`subscribing: ${ctx.code}, ${ctx.reason}`);
       }).on('subscribed', function (ctx) {
