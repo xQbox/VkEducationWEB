@@ -15,3 +15,4 @@ class Command(BaseCommand):
         cache.set('top_tags', data, CACHE_TTL)
 
         print("Cache was successfully refreshed!")
+        

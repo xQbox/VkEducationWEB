@@ -1,5 +1,4 @@
-import copy
-
+from django.core.cache import cache
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, reverse
@@ -9,14 +8,19 @@ from django.contrib.auth.decorators import login_required
 from app.forms import LoginForm, RegisterForm, SettingsForm, AskForm, AnswerForm
 from app.models import Question, Answer, Profile, Tag, User
 
-# Список вопросов
-QUESTIONS = [
-    {
-        'title': f'title{i}',
-        'id': i,
-        'text': f'This is text for QUESTIONS{i}',
-    } for i in range(1, 30)
-]
+
+def add_context(context: dict) -> None:
+    top_tags = cache.get('top_tags')
+    if top_tags is None:
+        top_tags = Tag.objects.get_popular()
+
+    top_members = cache.get('top_users')
+    if top_members is None:
+        top_members = Profile.objects.get_top_users()
+
+    context["tags"] = top_tags
+    context["members"] = top_members
+
 
 COLORS = [
     "text-bg-primary",
@@ -32,8 +36,6 @@ TAGS = ['python', 'django', 'cpp', 'ml', 'probabylity', 'harrypotter', 'gym', 'e
 
 def generate_colored_tags(tags, colors):
     return [{'tag': tag, 'color': colors[i % len(colors)]} for i, tag in enumerate(tags)]
-
-
 
 
 def paginate(objects_list, request, per_page=5):
@@ -60,44 +62,36 @@ def paginate(objects_list, request, per_page=5):
 
 def index(request):
     newQuestions = Question.objects.get_new()
-    tags = Tag.objects.get_popular()
     page = paginate(newQuestions, request, per_page=3)
     if page is None:
         return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
-    
-    color_tags = generate_colored_tags(tags, COLORS)
 
-    return render(
-        request,
-        'index.html',
-        context={
-            'questions': page.object_list,
-            'page_obj': page,
-            'user': request.user, 
-            'tags': tags,
-            'color_tags': color_tags,
-        }
-    )
+    context = {
+        'questions': page.object_list,
+        'page_obj': page,
+        'user': request.user,
+        'color_tags': generate_colored_tags(Tag.objects.get_popular(), COLORS),
+    }
+    add_context(context)
+
+    return render(request, 'index.html', context)
 
 
 def hot_questions(request):
     hotQuestions = Question.objects.get_hot()
-    tags = Tag.objects.get_popular()
-    color_tags = generate_colored_tags(tags, COLORS)
-
     page = paginate(hotQuestions, request, per_page=5)
     if page is None:
         return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
 
-    return render(request, 'hotQuestions.html',
-                  context={
-                        'questions': page.object_list,
-                        'page_obj': page,
-                        'user': request.user, 
-                        'tags': tags,
-                        'color_tags': color_tags,
-                    }
-                )
+    context = {
+        'questions': page.object_list,
+        'page_obj': page,
+        'user': request.user,
+        'color_tags': generate_colored_tags(Tag.objects.get_popular(), COLORS),
+    }
+    add_context(context)
+
+    return render(request, 'hotQuestions.html', context)
 
 
 def question(request, question_id):
@@ -105,11 +99,9 @@ def question(request, question_id):
         oneQuestion = Question.objects.get(pk=question_id)
     except Question.DoesNotExist:
         return render(request, 'error.html', context={'error': 'Вопрос не найден.'})
-    
+
     answers = Answer.objects.get_answers_by_question_id(question_id)
     answerForm = AnswerForm()
-    tags = Tag.objects.get_popular()
-    color_tags = generate_colored_tags(tags, COLORS)
 
     if request.method == "POST":
         answerForm = AnswerForm(request.POST)
@@ -120,55 +112,46 @@ def question(request, question_id):
                 ).first()
                 if not existing_answer:
                     new_answer = answerForm.save(request.user, oneQuestion)
-                    
-                    # TODO переделать логику -> Идея :
-                    # Сохранить ответ -> найти по id вопроса все ответы к нему
-                    # пройтись по всем ответам (по страницам).Найти сохраненный ответ с 
-                    # записанным в указанной странице. Переключить пользователя на страницу с ответом
-                    paginator = Paginator(answers, 2) 
+
+                    paginator = Paginator(answers, 2)
                     for page_number in range(1, paginator.num_pages + 1):
                         if new_answer in paginator.page(page_number).object_list:
                             return redirect(f"/question/{question_id}?page={page_number}#{new_answer.id}")
             except Exception as e:
                 print(f"Answer creation error: {e}")
-    
+
     page = paginate(answers, request, per_page=2)
-    return render(request, 'pageQuestion.html', {
+    context = {
         'question': oneQuestion,
         'answers': page.object_list,
-        'page_obj': page, 
-        'answerForm': answerForm,  
-        'tags': tags,
-        'color_tags': color_tags,
-    })
+        'page_obj': page,
+        'answerForm': answerForm,
+        'color_tags': generate_colored_tags(Tag.objects.get_popular(), COLORS),
+    }
+    add_context(context)
+
+    return render(request, 'pageQuestion.html', context)
+
 
 def tag(request, nameTag):
     questionByTag = Question.objects.get_by_tag(nameTag)
-    tags = Tag.objects.get_popular()
-    color_tags = generate_colored_tags(tags, COLORS)
-    
     page = paginate(questionByTag, request, per_page=3)
     if page is None:
         return render(request, 'error.html', context={'error': 'Ошибка при обработке пагинации.'})
-    
-    return render(
-        request,
-        'listing.html',
-        context={
-            'questions': page.object_list, 
-            'page_obj': page, 
-            "nameTag": nameTag, 
-            'tags': tags,
-            'color_tags': color_tags,
-        }
-    )
 
+    context = {
+        'questions': page.object_list,
+        'page_obj': page,
+        "nameTag": nameTag,
+        'color_tags': generate_colored_tags(Tag.objects.get_popular(), COLORS),
+    }
+    add_context(context)
 
+    return render(request, 'listing.html', context)
 
+@login_required
 def add_question(request):
     askForm = AskForm()
-    tags = Tag.objects.get_popular()
-    color_tags = generate_colored_tags(tags, COLORS)
 
     if request.method == "POST":
         askForm = AskForm(request.POST)
@@ -178,35 +161,40 @@ def add_question(request):
                 return redirect(f"/question/{questionId}")
             except Exception as e:
                 print(f"Question creation error: {e}")
-                    
-    return render(request, 'addQuestion.html', {
-        'askForm': askForm, 
-        'tags': tags,
-        'color_tags': color_tags,
-    })
+
+    context = {
+        'askForm': askForm,
+        'color_tags': generate_colored_tags(Tag.objects.get_popular(), COLORS),
+    }
+    add_context(context)
+
+    return render(request, 'addQuestion.html', context)
+
 
 def register(request):
     if request.user.is_authenticated:
         return redirect(reverse("index"))
 
     registerForm = RegisterForm()
-    
+
     if request.method == 'POST':
         registerForm = RegisterForm(request.POST)
-        
+
         if registerForm.is_valid():
             if User.objects.filter(username=registerForm.cleaned_data.get("username")).exists():
                 registerForm.add_error("username", "This username is already exists")
             else:
                 newUser = registerForm.save()
                 auth.login(request, newUser)
-                return redirect("index") 
+                return redirect("index")
         else:
             registerForm.add_error(None, "Something went wrong! Try again")
 
-        
-            
-    return render(request, 'register.html', {'registerForm': registerForm})
+    context = {'registerForm': registerForm}
+    add_context(context)
+
+    return render(request, 'register.html', context)
+
 
 @login_required(redirect_field_name='continue')
 def settings(request):
@@ -217,21 +205,21 @@ def settings(request):
         if request.method == "POST":
             settingsForm = SettingsForm(request.POST, request.FILES)
 
-            print("FORM files:", settingsForm.files)
-            
             if settingsForm.is_valid():
-                print("cleaned form:", settingsForm.cleaned_data)
                 try:
                     settingsForm.save(request.user.id)
                 except Exception as ex:
                     print(f"Update error: {ex}")
-    
-    return render(request, 'settings.html', {'settingsForm': settingsForm})
+
+    context = {'settingsForm': settingsForm}
+    add_context(context)
+
+    return render(request, 'settings.html', context)
 
 
 def log_in(request):
     if request.user.is_authenticated:
-        return redirect(request.GET.get("next", reverse("continue")))  
+        return redirect(request.GET.get("next", reverse("continue")))
 
     loginForm = LoginForm()
 
@@ -241,29 +229,31 @@ def log_in(request):
             user = auth.authenticate(request, **loginForm.cleaned_data)
             if user:
                 auth.login(request, user)
-                return redirect(request.POST.get("next", "/")) 
+                return redirect(request.POST.get("next", "/"))
         else:
             loginForm.add_error(field="password", error="Wrong password!")
 
-    return render(request, "login.html", {
-        "loginForm": loginForm, 
-        "next": request.GET.get("next", "/"),  
-    })
-    
-    
+    context = {
+        "loginForm": loginForm,
+        "next": request.GET.get("next", "/"),
+    }
+    add_context(context)
+
+    return render(request, "login.html", context)
+
+
 def logout(request):
-    print("inFunc")
     auth.logout(request)
     return redirect(reverse('index'))
 
+
 @login_required(redirect_field_name="continue")
 def like(request):
-    
     if request.method == "POST":
         content_type = request.POST.get("content")
         content_id = request.POST.get("id")
 
-        if content_id != None:
+        if content_id is not None:
             if content_type == "q":
                 amount = Question.objects.add_like(request.user.profile.id, content_id)
                 return JsonResponse({"amount": amount})
@@ -271,21 +261,19 @@ def like(request):
             elif content_type == "a":
                 amount = Answer.objects.add_like(request.user.profile.id, content_id)
                 return JsonResponse({"amount": amount})
-            else:
-                return JsonResponse({"amount": 0})
-        else:
-            return JsonResponse({"amount": 0})
-        
+
+        return JsonResponse({"amount": 0})
+
     return JsonResponse({"amount": 0})
-    
-    
+
+
 @login_required(redirect_field_name="continue")
 def dislike(request):
     if request.method == "POST":
         content_type = request.POST.get("content")
         content_id = request.POST.get("id")
 
-        if content_id != None:
+        if content_id is not None:
             if content_type == "q":
                 amount = Question.objects.add_dislike(request.user.profile.id, content_id)
                 return JsonResponse({"amount": amount})
@@ -293,11 +281,7 @@ def dislike(request):
             elif content_type == "a":
                 amount = Answer.objects.add_dislike(request.user.profile.id, content_id)
                 return JsonResponse({"amount": amount})
-            else:
-                return JsonResponse({"amount": 0})
-        else:
-            return JsonResponse({"amount": 0})
-        
+
+        return JsonResponse({"amount": 0})
+
     return JsonResponse({"amount": 0})
-
-
