@@ -129,8 +129,8 @@ class RegisterForm(forms.Form):
         except Exception as ex:
             pass
 
-        avatar = self.cleaned_data.pop("avatar")
-
+        avatar = self.cleaned_data.pop("avatar", None)
+        
         new_user = User.objects.create_user(**self.cleaned_data)
         profile = Profile.objects.create(user=new_user, avatar=avatar)
 

@@ -29,7 +29,7 @@ class ProfileManager(models.Manager):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT, null=True)
-    avatar = models.ImageField(null=True, blank=True, default="anon.jpg", upload_to="avatar/%Y/%m/%d")
+    avatar = models.ImageField(null=True, blank=True, default="static/img/1.jpg", upload_to="avatar/%Y/%m/%d")
     rating = models.IntegerField(default=0)
 
     objects = ProfileManager()

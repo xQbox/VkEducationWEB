@@ -95,8 +95,6 @@ def hot_questions(request):
 
 
 def question(request, question_id):
-    if request.user.is_authenticated:
-        return redirect(request.GET.get("next", reverse("continue")))
     try:
         oneQuestion = Question.objects.get(pk=question_id)
     except Question.DoesNotExist:
@@ -119,7 +117,6 @@ def question(request, question_id):
                     for page_number in range(1, paginator.num_pages + 1):
                         if new_answer in paginator.page(page_number).object_list:
                             return redirect(f"/question/{question_id}?page={page_number}#{new_answer.id}")
-            
             except Exception as e:
                 print(f"Answer creation error: {e}")
 
@@ -130,7 +127,6 @@ def question(request, question_id):
         'page_obj': page,
         'answerForm': answerForm,
         'color_tags': generate_colored_tags(Tag.objects.get_popular(), COLORS),
-        "next": request.GET.get("next", "/"),
     }
     add_context(context)
 
